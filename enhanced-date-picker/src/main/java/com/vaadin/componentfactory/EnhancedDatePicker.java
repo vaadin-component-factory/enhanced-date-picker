@@ -45,8 +45,8 @@ import elemental.json.JsonObject;
  * {@link DatePickerI18n} object.
  *
  */
+@JavaScript("frontend://date-fns-limited.min.js")
 @JsModule("./enhancedDatepickerConnector.js")
-@JavaScript("frontend://date-fns-limited.js")
 @JavaScript("frontend://enhancedDatepickerConnector.js")
 public class EnhancedDatePicker extends GeneratedEnhancedDatePicker<EnhancedDatePicker, LocalDate>
         implements HasSize, HasValidation {
