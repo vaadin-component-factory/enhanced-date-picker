@@ -16,7 +16,7 @@ This component can be used in combination with [`<vaadin-date-picker>`](https://
 In HTML/JS template you can add `<vaadin-date-picker id="datePickerId"></vaadin-date-picker>` and in Java side, you can bind it to `EnhancedDatePicker` like this:
 
 ```java
-@Id("datePicker")
+@Id("datePickerId")
 private EnhancedDatePicker datePicker;
 ```
 
