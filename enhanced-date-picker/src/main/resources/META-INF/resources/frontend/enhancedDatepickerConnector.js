@@ -1,11 +1,4 @@
 /* helper class for parsing regex from formatted date string */
-// use date-fns lib for formatting and parsing
-// import {format, parse} from 'date-fns/esm';
-// import * as locales from 'date-fns/locale';
-
-// import '@vaadin/vaadin-date-picker/vaadin-date-picker.js';
-// import {html} from '@polymer/polymer/lib/utils/html-tag.js';
-
 
 class EnhancedDatePickerPart {
     constructor(initial) {

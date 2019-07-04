@@ -1,4 +1,4 @@
-var DateFns = (function (exports) {
+var DateFns = (function () {
 	'use strict';
 
 	var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -5418,10 +5418,13 @@ var DateFns = (function (exports) {
 
 	// This file is generated automatically by `scripts/build/indices.js`. Please, don't change it.
 
-	exports.format = format;
-	exports.parse = parse;
+	var DateFns = {
+	  format: format,
+	  parse: parse
+	};
+	window['DateFns'] = DateFns;
 
-	return exports;
+	return DateFns;
 
-}({}));
+}());
 //# sourceMappingURL=date-fns-limited.js.map
