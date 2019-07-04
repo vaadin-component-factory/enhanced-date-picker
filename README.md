@@ -1,22 +1,44 @@
-# DatePicker component for Vaadin Flow
+# EnhancedDatePicker component for Vaadin Flow
 
-This project is the Component wrapper implementation of [`<vaadin-date-picker>`](https://github.com/vaadin/vaadin-date-picker) element
-for use from the server side with [Vaadin Flow](https://github.com/vaadin/flow).
+This project is fork of [DatePicker component for Vaadin Flow](https://github.com/vaadin/vaadin-date-picker-flow). 
+On top of basic functionality of DatePicker, it has ability to format date by pattern. 
+Formatting is done by JavaScript library [date-fns v2.0.0-beta.2](https://date-fns.org/v2.0.0-beta.2/docs/Getting-Started). More information about supported formatting paterns can be found here:
+ https://date-fns.org/v2.0.0-beta.2/docs/format
+ 
+Pattern can be set using method `setPatern(String pattern)`. For example:
+```java
+EnhancedDatePicker datePicker;
+datePicker.setPattern("dd-MMM-yyyy");
+``` 
+or by using constructor: `new EnhancedDatePicker(LocalDate.now(), "dd-MMM-yyyy");`
 
-`master` branch is the latest version that will at some point be released in the [Vaadin platform](https://github.com/vaadin/platform). See other branches for other framework versions:
- - `1.0` branch is Vaadin 10 LTS (Flow/Flow-component version 1.0)
+This component can be used in combination with [`<vaadin-date-picker>`](https://github.com/vaadin/vaadin-date-picker).
+In HTML/JS template you can add `<vaadin-date-picker id="datePickerId"></vaadin-date-picker>` and in Java side, you can bind it to `EnhancedDatePicker` like this:
+
+```java
+@Id("datePicker")
+private EnhancedDatePicker datePicker;
+```
+
+NOTE: Pattern formatting is not working in combination with i18n. This means that `setLocale(Locale locale)` and `setPattern(String pattern)` 
+overrides affect of each other. Result will be dependent on last method that was called.
+
+
+[Live Demo ↗](https://incubator.app.fi/enhanced-date-picker-demo/enhanced-date-picker)
+
+This component is part of Vaadin Component Factory
 
 ## Running the component demo
 Run from the command line:
-- `mvn  -pl vaadin-date-picker-flow-demo -Pwar install jetty:run`
+- `mvn  -pl enhanced-date-picker-demo -Pwar install jetty:run`
 
-Then navigate to `http://localhost:9998/vaadin-grid`
+Then navigate to `http://localhost:8080/enhanced-date-picker`
 
 ## Running Integration tests
 
 For running integration tests demos execute one of the following lines depending on the desired mode
-- `mvn -pl vaadin-date-picker-flow-integration-tests clean jetty:run`
-- `mvn -pl vaadin-date-picker-flow-integration-tests clean jetty:run -Dvaadin.bowerMode`
+- `mvn -pl enhanced-date-picker-integration-tests clean jetty:run`
+- `mvn -pl enhanced-date-picker-integration-tests clean jetty:run -Dvaadin.bowerMode`
 
 Then navigate to `http://localhost:9998/` for see integration tests demos.
 
@@ -32,8 +54,8 @@ To use the component in an application using maven,
 add the following dependency to your `pom.xml`:
 ```
 <dependency>
-    <groupId>com.vaadin</groupId>
-    <artifactId>vaadin-date-picker-flow</artifactId>
+    <groupId>com.vaadin.componentfactory</groupId>
+    <artifactId>enhanced-date-picker</artifactId>
     <version>${component.version}</version>
 </dependency>
 ```
@@ -46,5 +68,12 @@ Documentation for flow can be found in [Flow documentation](https://github.com/v
 - [Submit a pull request](https://www.digitalocean.com/community/tutorials/how-to-create-a-pull-request-on-github) with detailed title and description
 - Wait for response from one of Vaadin Flow team members
 
+# Vaadin Prime
+
+This component is available in Vaadin Prime subscription. It is still open source, but you need to have a valid CVAL license in order to use it. Read more at: https://vaadin.com/pricing
+
 ## License
-Apache License 2.0
+
+Commercial Vaadin Add-on License version 3 (CVALv3). For license terms, see LICENSE.
+
+Vaadin collects development time usage statistics to improve this product. For details and to opt-out, see https://github.com/vaadin/vaadin-usage-statistics.
