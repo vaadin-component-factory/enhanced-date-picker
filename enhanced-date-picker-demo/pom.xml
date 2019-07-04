@@ -23,37 +23,14 @@
         </license>
     </licenses>
 
-    <!--<parent>-->
-    <!--<groupId>com.vaadin</groupId>-->
-    <!--<artifactId>flow-component-base</artifactId>-->
-    <!--<version>2.0-SNAPSHOT</version>-->
-    <!--</parent>-->
-
     <properties>
         <flow.version>2.0.1</flow.version>
         <osgi.version>6.0.0</osgi.version>
-        <!--<jetty.plugin.version>9.3.9.v20160517</jetty.plugin.version>-->
-        <!--<powermock.version>1.7.1</powermock.version>-->
         <vaadin.version>14.0.0.rc2</vaadin.version>
-        <!--<testbench.version>6.0.1</testbench.version>-->
-        <!--<jetty.plugin.version>9.4.11.v20180605</jetty.plugin.version>-->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
-
-
-    <!--<dependencyManagement>-->
-        <!--<dependencies>-->
-            <!--<dependency>-->
-                <!--<groupId>com.vaadin</groupId>-->
-                <!--<artifactId>vaadin-bom</artifactId>-->
-                <!--<type>pom</type>-->
-                <!--<scope>import</scope>-->
-                <!--<version>${vaadin.version}</version>-->
-            <!--</dependency>-->
-        <!--</dependencies>-->
-    <!--</dependencyManagement>-->
 
     <dependencies>
         <!-- Flow -->
@@ -72,11 +49,6 @@
             <artifactId>flow-html-components</artifactId>
             <version>${flow.version}</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.vaadin</groupId>-->
-            <!--<artifactId>vaadin-core</artifactId>-->
-            <!--<version>${vaadin.version}</version>-->
-        <!--</dependency>-->
 
         <!-- Component -->
         <dependency>
@@ -174,38 +146,4 @@
         </profile>
     </profiles>
 
-
-    <!--<profiles>-->
-        <!--<profile>-->
-            <!--<id>default</id>-->
-            <!--<activation>-->
-                <!--<activeByDefault>true</activeByDefault>-->
-            <!--</activation>-->
-            <!--<properties>-->
-                <!--<packaging.type>jar</packaging.type>-->
-            <!--</properties>-->
-        <!--</profile>-->
-        <!--<profile>-->
-            <!--&lt;!&ndash;Only used for local testing &ndash;&gt;-->
-            <!--<id>war</id>-->
-            <!--<properties>-->
-                <!--<packaging.type>war</packaging.type>-->
-            <!--</properties>-->
-            <!--<build>-->
-                <!--<plugins>-->
-                    <!--<plugin>-->
-                        <!--<groupId>com.vaadin</groupId>-->
-                        <!--<artifactId>flow-maven-plugin</artifactId>-->
-                    <!--</plugin>-->
-                    <!--<plugin>-->
-                        <!--<groupId>org.eclipse.jetty</groupId>-->
-                        <!--<artifactId>jetty-maven-plugin</artifactId>-->
-                        <!--<configuration>-->
-                            <!--<scanIntervalSeconds>5</scanIntervalSeconds>-->
-                        <!--</configuration>-->
-                    <!--</plugin>-->
-                <!--</plugins>-->
-            <!--</build>-->
-        <!--</profile>-->
-    <!--</profiles>-->
 </project>

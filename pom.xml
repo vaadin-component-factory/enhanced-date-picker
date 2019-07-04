@@ -35,25 +35,9 @@
         </license>
     </licenses>
 
-
     <modules>
         <module>enhanced-date-picker</module>
         <module>enhanced-date-picker-testbench</module>
         <module>enhanced-date-picker-demo</module>
     </modules>
-
-    <!--<profiles>-->
-        <!--<profile>-->
-            <!--<id>default</id>-->
-            <!--<activation>-->
-                <!--<property>-->
-                    <!--<name>!release</name>-->
-                <!--</property>-->
-            <!--</activation>-->
-            <!--<modules>-->
-                <!--<module>enhanced-date-picker-integration-tests</module>-->
-                <!--<module>enhanced-date-picker-integration-tests/pom-bower-mode.xml</module>-->
-            <!--</modules>-->
-        <!--</profile>-->
-    <!--</profiles>-->
 </project>
