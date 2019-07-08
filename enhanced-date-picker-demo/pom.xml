@@ -66,6 +66,11 @@
             <artifactId>vaadin-button-flow</artifactId>
             <version>2.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-ordered-layout-flow</artifactId>
+            <version>2.0.0</version>
+        </dependency>
 
         <!-- demo specific -->
         <dependency>

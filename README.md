@@ -20,8 +20,9 @@ In HTML/JS template you can add `<vaadin-date-picker id="datePickerId"></vaadin-
 private EnhancedDatePicker datePicker;
 ```
 
-NOTE: Pattern formatting is not working in combination with i18n. This means that `setLocale(Locale locale)` and `setPattern(String pattern)` 
-overrides affect of each other. Result will be dependent on last method that was called.
+
+NOTE: I18N in this component is also done by DateFns and some locales for some patterns are not stable: 
+for example Russian and French for pattern `MMM`(it adds '.' in the end of month and then it can not parse it back)
 
 
 [Live Demo ↗](https://incubator.app.fi/enhanced-date-picker-demo/enhanced-date-picker)

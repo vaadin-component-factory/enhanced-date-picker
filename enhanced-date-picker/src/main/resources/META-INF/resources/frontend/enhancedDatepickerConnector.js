@@ -32,7 +32,10 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
         datepicker.$connector.yearPart = new EnhancedDatePickerPart("1987");
         datepicker.$connector.parts = [datepicker.$connector.dayPart, datepicker.$connector.monthPart, datepicker.$connector.yearPart];
 
-        datepicker.$connector.pattern = null;
+        datepicker.$connector.pattern = 'dd/MM/yyyy';
+        datepicker.$connector.defaultPattern = 'dd/MM/yyyy';
+        datepicker.$connector.defaultLocale = 'en-US';
+        //dd/MM/yyyy
         // Old locale should always be the default vaadin-date-picker component
         // locale {English/US} as we init lazily and the date-picker formats
         // the date using the default i18n settings and we need to use the input
@@ -64,16 +67,8 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
             return inputValue;
         }
 
-        datepicker.$connector.setLocale = function (locale) {
-
-            try {
-                // Check whether the locale is supported or not
-                new Date().toLocaleDateString(locale);
-            } catch (e) {
-                locale = "en-US";
-                console.warn("The locale is not supported, using default locale setting(en-US).");
-            }
-
+        datepicker.$connector.setLocaleAndPattern = function (locale, pattern) {
+            let language = locale ? locale.split("-")[0] : "enUS";
             let currentDate = false;
             let inputValue = getInputValue();
             if (datepicker.i18n.parseDate !== 'undefined' && inputValue) {
@@ -105,80 +100,50 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
 
             datepicker.i18n.formatDate = function (date) {
                 let rawDate = new Date(date.year, date.month, date.day);
-                return cleanString(rawDate.toLocaleDateString(locale));
+                return DateFns.format(rawDate, pattern, {locale: DateFns.locales[language]});
             };
-
-            datepicker.i18n.parseDate = function (dateString) {
-                dateString = cleanString(dateString);
-
-                if (dateString.length == 0) {
-                    return;
-                }
-
-                let match = dateString.match(datepicker.$connector.regex);
-                if (match && match.length == 4) {
-                    for (let i = 1; i < 4; i++) {
-                        datepicker.$connector.parts[i-1].value = parseInt(match[i]);
-                    }
-                    return {
-                        day: datepicker.$connector.dayPart.value,
-                        month: datepicker.$connector.monthPart.value - 1,
-                        year: datepicker.$connector.yearPart.value
-                    };
-                }  else {
-                    return false;
-                }
-            };
-
-            if (inputValue === "") {
-                oldLocale = locale;
-            } else if (currentDate) {
-                    /* set current date to invoke use of new locale */
-                    datepicker._selectedDate = new Date(currentDate.year, currentDate.month, currentDate.day);
-            }
-        }
-
-
-        datepicker.$connector.setPattern = function(pattern) {
-            this.pattern = pattern;
-            this.refresh(this.pattern);
-        }
-
-        datepicker.$connector.refresh = function(pattern) {
-
-            if (!pattern) {
-                datepicker.$connector.setLocale(this.oldLocale);
-                return;
-            }
-
-            let currentDate = false;
-            let inputValue = getInputValue();
-            if (datepicker.i18n.parseDate !== 'undefined' && inputValue) {
-                /* get current date with old parsing */
-                currentDate = datepicker.i18n.parseDate(inputValue);
-            }
-
-            datepicker.i18n.formatDate = function (date) {
-                let rawDate = new Date(date.year, date.month, date.day);
-                return DateFns.format(rawDate, pattern);
-            }
 
             datepicker.i18n.parseDate = function (dateString) {
                 if (dateString.length == 0) {
                     return;
                 }
-                const date = DateFns.parse(dateString, pattern, new Date());
+
+                const date = DateFns.parse(dateString,
+                    pattern,
+                    new Date(), {locale: DateFns.locales[language]});
+
                 return {
                     day: date.getDate(),
                     month: date.getMonth(),
                     year: date.getFullYear()
                 };
-            }
+            };
 
-            if (inputValue !== "" && currentDate) {
-                /* set current date to invoke use of new pattern*/
+            if (inputValue === "") {
+                oldLocale = locale;
+            } else if (currentDate) {
+                /* set current date to invoke use of new locale */
                 datepicker._selectedDate = new Date(currentDate.year, currentDate.month, currentDate.day);
             }
+        }
+
+        datepicker.$connector.setLocale = function (locale) {
+            try {
+                // Check whether the locale is supported or not
+                new Date().toLocaleDateString(locale);
+            } catch (e) {
+                locale = "en-US";
+                console.warn("The locale is not supported, using default locale setting(en-US).");
+            }
+
+            this.locale = locale;
+            this.setLocaleAndPattern(this.locale, this.pattern);
+        }
+
+
+        datepicker.$connector.setPattern = function(pattern) {
+            this.pattern = pattern ? pattern : this.defaultPattern;
+            this.setLocaleAndPattern(this.locale, this.pattern);
         }
     }
 }

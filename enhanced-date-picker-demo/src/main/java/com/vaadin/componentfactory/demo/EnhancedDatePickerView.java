@@ -25,6 +25,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.NativeButton;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.demo.DemoView;
 import com.vaadin.flow.router.Route;
@@ -40,6 +41,7 @@ public class EnhancedDatePickerView extends DemoView {
     @Override
     public void initView() {
         createPatternDatePicker();
+        createPatternAndLocaleDatePicker();
         createSimpleDatePicker();
         createMinAndMaxDatePicker();
         createDisabledDatePicker();
@@ -100,6 +102,63 @@ public class EnhancedDatePickerView extends DemoView {
         datePicker.setId("Pattern-picker");
 
         addCard("Date picker with pattern", datePicker, message, patten, setPatternBtn, dropPatternBtn);
+    }
+
+    private void createPatternAndLocaleDatePicker() {
+        Div message = createMessageDiv("simple-picker-message");
+
+        // begin-source-example
+        // source-example-heading: Date picker with pattern and locale
+        EnhancedDatePicker datePicker = new EnhancedDatePicker(LocalDate.now(), "dd-MMM-yyyy");
+        UpdateMessage(message, datePicker);
+
+        datePicker.addValueChangeListener(
+                event -> UpdateMessage(message, datePicker));
+
+        TextField patten = new TextField();
+        patten.setLabel("Define a pattern");
+        patten.setValue("dd-MMM-yyyy");
+
+        Button setPatternBtn = new Button("Set pattern from text field");
+        setPatternBtn.addClickListener(e -> {
+            datePicker.setPattern(patten.getValue());
+            UpdateMessage(message, datePicker);
+        });
+
+        Button dropPatternBtn = new Button("Drop pattern");
+        dropPatternBtn.addClickListener(e -> {
+            datePicker.setPattern(null);
+            UpdateMessage(message, datePicker);
+        });
+        HorizontalLayout patterns = new HorizontalLayout();
+        patterns.add(setPatternBtn, dropPatternBtn);
+
+
+        Button setlocaleBtn = new Button("Set locale to German");
+        setlocaleBtn.addClickListener(e -> {
+            datePicker.setLocale(Locale.GERMAN);
+            UpdateMessage(message, datePicker);
+        });
+
+        Button setlocaleEsBtn = new Button("Set locale to Spanish");
+        setlocaleEsBtn.addClickListener(e -> {
+            datePicker.setLocale(new Locale("es"));
+            UpdateMessage(message, datePicker);
+        });
+
+        Button setLocaleEnBtn = new Button("Set locale to English");
+        setLocaleEnBtn.addClickListener(e -> {
+            datePicker.setLocale(Locale.ENGLISH);
+            UpdateMessage(message, datePicker);
+        });
+
+        HorizontalLayout locales = new HorizontalLayout();
+        locales.add(setlocaleBtn, setlocaleEsBtn, setLocaleEnBtn);
+        // end-source-example
+
+        datePicker.setId("Pattern-picker");
+
+        addCard("Date picker with pattern and locale", datePicker, message, patten, patterns, locales);
     }
 
     private void createMinAndMaxDatePicker() {
