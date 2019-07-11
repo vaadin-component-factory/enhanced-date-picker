@@ -5,7 +5,7 @@ On top of basic functionality of DatePicker, it has ability to format date by pa
 Formatting is done by JavaScript library [date-fns v2.0.0-beta.2](https://date-fns.org/v2.0.0-beta.2/docs/Getting-Started). More information about supported formatting paterns can be found here:
  https://date-fns.org/v2.0.0-beta.2/docs/format
  
-Pattern can be set using method `setPatern(String pattern)`. For example:
+Pattern can be set using method `setPattern(String pattern)`. For example:
 ```java
 EnhancedDatePicker datePicker;
 datePicker.setPattern("dd-MMM-yyyy");
@@ -21,7 +21,7 @@ private EnhancedDatePicker datePicker;
 ```
 
 
-NOTE: I18N in this component is also done by DateFns and some locales for some patterns are not stable: 
+NOTE: Localization in this component is also done by DateFns and some locales for some patterns are not stable: 
 for example Russian and French for pattern `MMM`(it adds '.' in the end of month and then it can not parse it back)
 
 
