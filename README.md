@@ -17,6 +17,7 @@ Patterns used for parsing user's input can be set using method `setParsers(Strin
 EnhancedDatePicker datePicker;
 datePicker.setParsers("dd-MM-yy", "dd/MM/yy", "dd/MM/yyyy");
 ``` 
+or by using constructor: `new EnhancedDatePicker(LocalDate.now(), "dd-MMM-yyyy", "dd-MM-yy", "dd/MM/yy", "dd/MM/yyyy");`
 
 This component can be used in combination with [`<vaadin-date-picker>`](https://github.com/vaadin/vaadin-date-picker).
 In HTML/JS template you can add `<vaadin-date-picker id="datePickerId"></vaadin-date-picker>` and in Java side, you can bind it to `EnhancedDatePicker` like this:
