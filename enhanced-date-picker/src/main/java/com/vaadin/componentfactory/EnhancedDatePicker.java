@@ -62,7 +62,8 @@ public class EnhancedDatePicker extends GeneratedEnhancedDatePicker<EnhancedDate
 
     private Locale locale;
 
-    private String pattern;
+    private String formattingPattern;
+    private String[] parserPatterns;
 
     /**
      * Default constructor.
@@ -203,12 +204,29 @@ public class EnhancedDatePicker extends GeneratedEnhancedDatePicker<EnhancedDate
      *
      * @param initialDate
      *            the pre-selected date in the picker
-     * @param pattern
+     * @param formattingPattern
      *            the pattern for formatting value of the date picker
      */
-    public EnhancedDatePicker(LocalDate initialDate, String pattern) {
+    public EnhancedDatePicker(LocalDate initialDate, String formattingPattern) {
         this(initialDate);
-        setPattern(pattern);
+        setPattern(formattingPattern);
+    }
+    
+    /**
+     * Convenience Constructor to create a date picker with pre-selected date, formatting 
+     * pattern, and parsing patterns.
+     *
+     * @param initialDate
+     *            the pre-selected date in the picker
+     * @param formattingPattern
+     *            the pattern for formatting value of the date picker
+     * @param parserPatterns
+     *           the array of patterns used for parsing the date picker's value
+     */
+    public EnhancedDatePicker(LocalDate initialDate, String formattingPattern, String ... parserPatterns) {
+        this(initialDate);
+        setPattern(formattingPattern);
+        setParsers(parserPatterns);
     }
 
     /**
@@ -303,6 +321,30 @@ public class EnhancedDatePicker extends GeneratedEnhancedDatePicker<EnhancedDate
     public Locale getLocale() {
         return locale;
     }
+    
+    /**
+     * Setting the patterns for parsing the value of the date-picker.
+     * 
+     * The parsing will be attempted according to the order of the supplied patterns. If none of these
+     * patterns can successfully parse the date-picker's value, the parsing will be attempted using the
+     * formatting value (which can be set using @setPattern).
+     *
+     * @param parserPatterns
+     *           the array of patterns used for parsing the date picker's value
+     */
+    public void setParsers(String... parserPatterns){
+    	this.parserPatterns = parserPatterns;
+        runBeforeClientResponse(ui -> getElement().callFunction("$connector.setParsers", parserPatterns));
+    }
+    
+    /**
+     * Gets the parser patterns for this date-picker
+     *
+     * @return an array of the parser patterns used for formatting value of the date picker
+     */
+    public String[] getParsers() {
+        return parserPatterns;
+    }
 
     /**
      * Setting the Pattern for formatting value of the date picker
@@ -310,13 +352,13 @@ public class EnhancedDatePicker extends GeneratedEnhancedDatePicker<EnhancedDate
      * Note: overrides affect of @setLocale and opposite. If setLocale was called after this function then
      * setPattern will have no effect
      *
-     * @param pattern
+     * @param formattingPattern
      *           the pattern for formatting value of the date picker
      *           if set to null or empty string then for matting will be done by Locale
      */
-    public void setPattern(String pattern){
-        this.pattern = pattern;
-        runBeforeClientResponse(ui -> getElement().callFunction("$connector.setPattern", pattern));
+    public void setPattern(String formattingPattern){
+        this.formattingPattern = formattingPattern;
+        runBeforeClientResponse(ui -> getElement().callFunction("$connector.setPattern", formattingPattern));
     }
 
     /**
@@ -325,7 +367,7 @@ public class EnhancedDatePicker extends GeneratedEnhancedDatePicker<EnhancedDate
      * @return the pattern for formatting value of the date picker
      */
     public String getPattern() {
-        return pattern;
+        return formattingPattern;
     }
 
     @Override

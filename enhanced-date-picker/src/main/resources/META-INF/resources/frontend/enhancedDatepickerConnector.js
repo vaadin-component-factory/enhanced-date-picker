@@ -34,6 +34,7 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
 
         datepicker.$connector.pattern = 'dd/MM/yyyy';
         datepicker.$connector.defaultPattern = 'dd/MM/yyyy';
+        datepicker.$connector.parsers = [];
         datepicker.$connector.defaultLocale = 'en-US';
         //dd/MM/yyyy
         // Old locale should always be the default vaadin-date-picker component
@@ -68,6 +69,10 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
         }
 
         datepicker.$connector.setLocaleAndPattern = function (locale, pattern) {
+            this.setLocalePatternAndParsers(locale, pattern, this.parsers);
+        }
+
+        datepicker.$connector.setLocalePatternAndParsers = function (locale, pattern, parsers) {
             let language = locale ? locale.split("-")[0] : "enUS";
             let currentDate = false;
             let inputValue = getInputValue();
@@ -108,9 +113,24 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
                     return;
                 }
 
-                const date = DateFns.parse(dateString,
-                    pattern,
-                    new Date(), {locale: DateFns.locales[language]});
+                var parsersCopy = JSON.parse(JSON.stringify(parsers));
+                parsersCopy.push(pattern);
+
+                var date;
+                var i;
+                for (i in parsersCopy) {
+                    try {
+                        date = DateFns.parse(dateString,
+                            parsersCopy[i],
+                            new Date(), {locale: DateFns.locales[language]});
+                        if (date != 'Invalid Date') {
+                            break;
+                        }
+                    }
+                      catch(err) {
+                        
+                    }
+                }
 
                 return {
                     day: date.getDate(),
@@ -137,13 +157,18 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
             }
 
             this.locale = locale;
-            this.setLocaleAndPattern(this.locale, this.pattern);
+            this.setLocalePatternAndParsers(this.locale, this.pattern, this.parsers);
         }
 
 
         datepicker.$connector.setPattern = function(pattern) {
             this.pattern = pattern ? pattern : this.defaultPattern;
-            this.setLocaleAndPattern(this.locale, this.pattern);
+            this.setLocalePatternAndParsers(this.locale, this.pattern, this.parsers);
+        }
+
+        datepicker.$connector.setParsers = function(...parsers) {
+            this.parsers = parsers;
+            this.setLocalePatternAndParsers(this.locale, this.pattern, this.parsers);
         }
     }
 }
