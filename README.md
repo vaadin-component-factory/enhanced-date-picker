@@ -5,12 +5,18 @@ On top of basic functionality of DatePicker, it has ability to format date by pa
 Formatting is done by JavaScript library [date-fns v2.0.0-beta.2](https://date-fns.org/v2.0.0-beta.2/docs/Getting-Started). More information about supported formatting paterns can be found here:
  https://date-fns.org/v2.0.0-beta.2/docs/format
  
-Pattern can be set using method `setPattern(String pattern)`. For example:
+Formatting pattern can be set using method `setPattern(String formattingPattern)`. For example:
 ```java
 EnhancedDatePicker datePicker;
 datePicker.setPattern("dd-MMM-yyyy");
 ``` 
 or by using constructor: `new EnhancedDatePicker(LocalDate.now(), "dd-MMM-yyyy");`
+
+Patterns used for parsing user's input can be set using method `setParsers(String ... parserPatterns)`. For example:
+```java
+EnhancedDatePicker datePicker;
+datePicker.setParsers("dd-MM-yy", "dd/MM/yy", "dd/MM/yyyy");
+``` 
 
 This component can be used in combination with [`<vaadin-date-picker>`](https://github.com/vaadin/vaadin-date-picker).
 In HTML/JS template you can add `<vaadin-date-picker id="datePickerId"></vaadin-date-picker>` and in Java side, you can bind it to `EnhancedDatePicker` like this:
