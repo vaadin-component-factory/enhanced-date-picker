@@ -27,8 +27,8 @@ import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasValidation;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.datepicker.GeneratedVaadinDatePicker;
 import com.vaadin.flow.component.dependency.JavaScript;
-import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.internal.JsonSerializer;
@@ -47,8 +47,10 @@ import elemental.json.JsonObject;
  */
 @JavaScript("frontend://date-fns-limited.min.js")
 @JavaScript("frontend://enhancedDatepickerConnector.js")
-public class EnhancedDatePicker extends GeneratedEnhancedDatePicker<EnhancedDatePicker, LocalDate>
+public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePicker, LocalDate>
         implements HasSize, HasValidation {
+
+	private static final String PROP_AUTO_OPEN_DISABLED = "autoOpenDisabled";
 
     private DatePickerI18n i18n;
 
@@ -628,6 +630,25 @@ public class EnhancedDatePicker extends GeneratedEnhancedDatePicker<EnhancedDate
         return isOpenedBoolean();
     }
 
+    /**
+     * When auto open is enabled, the dropdown will open when the field is clicked.
+     *
+     * @param autoOpen Value for the auto open property,
+     */
+    public void setAutoOpen(boolean autoOpen) {
+        getElement().setProperty(PROP_AUTO_OPEN_DISABLED, !autoOpen);
+    }
+
+    /**
+     * When auto open is enabled, the dropdown will open when the field is clicked.
+     *
+     * @return {@code true} if auto open is enabled. {@code false} otherwise. Default is {@code true}
+     */
+    public boolean isAutoOpen() {
+        return !getElement().getProperty(PROP_AUTO_OPEN_DISABLED,false);
+    }
+
+    
     @Override
     public void setName(String name) {
         super.setName(name);

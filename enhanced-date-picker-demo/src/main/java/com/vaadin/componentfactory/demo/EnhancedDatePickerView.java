@@ -357,6 +357,7 @@ public class EnhancedDatePickerView extends DemoView {
         Div message = createMessageDiv("Parser-date-picker");
 
         EnhancedDatePicker datePicker = new EnhancedDatePicker(LocalDate.now(), "dd-MMM-yyyy");
+        datePicker.setAutoOpen(false);
         UpdateMessage(message, datePicker);
 
         datePicker.addValueChangeListener(

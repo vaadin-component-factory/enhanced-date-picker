@@ -9,7 +9,7 @@
     <packaging>war</packaging>
     <name>Enhanced DatePicker Demo</name>
 
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <inceptionYear>2019</inceptionYear>
     <organization>
         <name>Vaadin Ltd</name>
@@ -24,9 +24,9 @@
     </licenses>
 
     <properties>
-        <flow.version>2.0.1</flow.version>
+        <flow.version>2.3.4</flow.version>
         <osgi.version>6.0.0</osgi.version>
-        <vaadin.version>14.0.0.rc2</vaadin.version>
+        <vaadin.version>14.3.4</vaadin.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <failOnMissingWebXml>false</failOnMissingWebXml>
@@ -59,17 +59,17 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-text-field-flow</artifactId>
-            <version>${flow.version}</version>
+            <version>2.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-button-flow</artifactId>
-            <version>2.0.0</version>
+            <version>2.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-ordered-layout-flow</artifactId>
-            <version>2.0.0</version>
+            <version>2.2.0</version>
         </dependency>
 
         <!-- demo specific -->
