@@ -28,6 +28,7 @@ import com.vaadin.flow.component.HasValidation;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.datepicker.GeneratedVaadinDatePicker;
+import com.vaadin.flow.component.datepicker.DatePicker.DatePickerI18n;
 import com.vaadin.flow.component.dependency.JavaScript;
 import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.function.SerializableFunction;
@@ -63,7 +64,12 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
     };
 
     private Locale locale;
+    private String languageTag;
 
+    private LocalDate max;
+    private LocalDate min;
+    private boolean required;
+    
     private String formattingPattern;
     private String[] parserPatterns;
 
@@ -84,8 +90,13 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
      */
     public EnhancedDatePicker(LocalDate initialDate) {
         super(initialDate, null, String.class, PARSER, FORMATTER);
-        getElement().synchronizeProperty("invalid", "invalid-changed");
-        setLocale(UI.getCurrent().getLocale());
+
+        // workaround for https://github.com/vaadin/flow/issues/3496
+        setInvalid(false);
+
+        addValueChangeListener(e -> validate());
+
+        FieldValidationUtil.disableClientValidation(this);
     }
 
     /**
@@ -197,7 +208,7 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
      */
     public EnhancedDatePicker(LocalDate initialDate, Locale locale) {
         this(initialDate);
-        setLocale(locale);
+        setLocale(locale);        
     }
 
     /**
@@ -241,6 +252,7 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
      */
     public void setMin(LocalDate min) {
         setMinAsString(FORMATTER.apply(min));
+        this.min = min;
     }
 
     /**
@@ -264,6 +276,7 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
      */
     public void setMax(LocalDate max) {
         setMaxAsString(FORMATTER.apply(max));
+        this.max = max;
     }
 
     /**
@@ -277,13 +290,11 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
         return PARSER.apply(getMaxAsStringString());
     }
 
+
     /**
      * Set the Locale for the Date Picker. The displayed date will be matched to
-     * the setPattern used in that locale.
+     * the format used in that locale.
      * <p>
-     * Note: overrides affect of @setPattern and opposite. If setPattern was called after this function then
-     * setLocale will have no effect
-     *
      * NOTE:Supported formats are MM/DD/YYYY, DD/MM/YYYY and YYYY/MM/DD. Browser
      * compatibility can be different based on the browser and mobile devices,
      * you can check here for more details: <a href=
@@ -295,7 +306,6 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
     public void setLocale(Locale locale) {
         Objects.requireNonNull(locale, "Locale must not be null.");
         this.locale = locale;
-        String languageTag;
         // For ill-formed locales, Locale.toLanguageTag() will append subtag
         // "lvariant" to it, which will cause the client side
         // Date().toLocaleDateString()
@@ -310,8 +320,12 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
         } else {
             languageTag = locale.getLanguage() + "-" + locale.getCountry();
         }
+        getUI().ifPresent(ui -> setLocaleWithJS());
+    }
+
+    private void setLocaleWithJS() {
         runBeforeClientResponse(ui -> getElement()
-                .callFunction("$connector.setLocale", languageTag));
+                .callJsFunction("$connector.setLocale", languageTag));
     }
 
     /**
@@ -376,6 +390,14 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
         initConnector();
+        if (locale == null) {
+            getUI().ifPresent(ui -> setLocale(ui.getLocale()));        	
+        } else if (languageTag != null) {
+            setLocaleWithJS();
+        }
+        if (i18n != null) {
+            setI18nWithJS();
+        }
     }
 
     private void initConnector() {
@@ -408,15 +430,15 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
         Objects.requireNonNull(i18n,
                 "The I18N properties object should not be null");
         this.i18n = i18n;
+        getUI().ifPresent(ui -> setI18nWithJS());
+    }
+
+    private void setI18nWithJS() {
         runBeforeClientResponse(ui -> {
-            if (i18n == this.i18n) {
-                JsonObject i18nObject = (JsonObject) JsonSerializer
-                        .toJson(this.i18n);
-                for (String key : i18nObject.keys()) {
-                    ui.getPage().executeJavaScript(
-                            "$0.set('i18n." + key + "', $1)", getElement(),
-                            i18nObject.get(key));
-                }
+            JsonObject i18nObject = (JsonObject) JsonSerializer.toJson(i18n);
+            for (String key : i18nObject.keys()) {
+                getElement().executeJs("this.set('i18n." + key + "', $0)",
+                        i18nObject.get(key));
             }
         });
     }
@@ -461,6 +483,17 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
     public boolean isInvalid() {
         return isInvalidBoolean();
     }
+
+    /**
+     * Performs a server-side validation of the given value. This is needed because it is possible to circumvent the
+     * client side validation constraints using browser development tools.
+     */
+    private boolean isInvalid(LocalDate value) {
+        final boolean isRequiredButEmpty = required && Objects.equals(getEmptyValue(), value);
+        final boolean isGreaterThanMax  = value != null && max != null && value.isAfter(max);
+        final boolean isSmallerThenMin = value != null && min != null && value.isBefore(min);
+        return isRequiredButEmpty || isGreaterThanMax || isSmallerThenMin;
+    }    
 
     /**
      * Sets displaying a clear button in the datepicker when it has value.
@@ -551,8 +584,15 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
     @Override
     public void setRequired(boolean required) {
         super.setRequired(required);
+        this.required = required;
     }
 
+    @Override
+    public void setRequiredIndicatorVisible(boolean required) {
+        super.setRequiredIndicatorVisible(required);
+        this.required = required;
+    }
+    
     /**
      * Determines whether the datepicker is marked as input required.
      * <p>
@@ -654,6 +694,16 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
         super.setName(name);
     }
 
+    /**
+     * Performs server-side validation of the current value. This is needed
+     * because it is possible to circumvent the client-side validation
+     * constraints using browser development tools.
+     */
+    protected void validate() {
+        setInvalid(isInvalid(getValue()));
+    }
+
+    
     /**
      * Gets the name of the EnhancedDatePicker.
      *

@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import com.vaadin.componentfactory.EnhancedDatePicker;
 import com.vaadin.componentfactory.EnhancedDatePicker.DatePickerI18n;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
