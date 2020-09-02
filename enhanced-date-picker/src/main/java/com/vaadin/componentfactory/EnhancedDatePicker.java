@@ -96,7 +96,7 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
 
         addValueChangeListener(e -> validate());
 
-        FieldValidationUtil.disableClientValidation(this);
+        getElement().synchronizeProperty("invalid", "invalid-changed");
     }
 
     /**
@@ -240,6 +240,18 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
         this(initialDate);
         setPattern(formattingPattern);
         setParsers(parserPatterns);
+    }
+
+    /**
+     * EnhancedDatePicker has workaround to this issue    
+     * https://github.com/vaadin/vaadin-date-picker-flow/issues/223
+     * 
+     * Calling disableClientValidation() after instantiation will make EnhancedDatePicker 
+     * to behave similar way as regular DatePicker with client side validations. This
+     * method is provided if you need to retain that behavior instead.
+     */
+    public void disableClientValidation() {
+        FieldValidationUtil.disableClientValidation(this);
     }
 
     /**

@@ -112,6 +112,7 @@ public class EnhancedDatePickerView extends DemoView {
         // begin-source-example
         // source-example-heading: Date picker with pattern and locale
         EnhancedDatePicker datePicker = new EnhancedDatePicker(LocalDate.now(), "dd-MMM-yyyy");
+//        UI.getCurrent().setLocale(Locale.ITALIAN);
         UpdateMessage(message, datePicker);
 
         datePicker.addValueChangeListener(
@@ -357,7 +358,14 @@ public class EnhancedDatePickerView extends DemoView {
     private void createParserDatePicker() {
         Div message = createMessageDiv("Parser-date-picker");
 
-        EnhancedDatePicker datePicker = new EnhancedDatePicker(LocalDate.now(), "dd-MMM-yyyy");
+//        EnhancedDatePicker datePicker = new EnhancedDatePicker(LocalDate.now(), "dd-MMM-yyyy");
+        EnhancedDatePicker datePicker = new EnhancedDatePicker("Date",LocalDate.now());
+        datePicker.addInvalidChangeListener(event -> {
+        	if (event.isInvalid()) {
+        		datePicker.setErrorMessage("Error");
+        	}
+        });
+        datePicker.setPattern("dd-MMM-yyyy");
         datePicker.setAutoOpen(false);
         UpdateMessage(message, datePicker);
 
