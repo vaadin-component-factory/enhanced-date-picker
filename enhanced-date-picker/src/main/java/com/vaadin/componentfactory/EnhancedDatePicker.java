@@ -96,7 +96,7 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
 
         addValueChangeListener(e -> validate());
 
-        getElement().synchronizeProperty("invalid", "invalid-changed");
+        FieldValidationUtil.disableClientValidation(this);
     }
 
     /**
