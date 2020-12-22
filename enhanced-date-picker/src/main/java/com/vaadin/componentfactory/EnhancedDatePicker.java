@@ -22,6 +22,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasValidation;
@@ -95,8 +96,6 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
         setInvalid(false);
 
         addValueChangeListener(e -> validate());
-
-        getElement().synchronizeProperty("invalid", "invalid-changed");
     }
 
     /**
@@ -250,6 +249,7 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
      * to behave similar way as regular DatePicker with client side validations. This
      * method is provided if you need to retain that behavior instead.
      */
+    @Deprecated
     public void disableClientValidation() {
         FieldValidationUtil.disableClientValidation(this);
     }
@@ -410,6 +410,7 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
         if (i18n != null) {
             setI18nWithJS();
         }
+        FieldValidationUtil.disableClientValidation(this);
     }
 
     private void initConnector() {
@@ -735,6 +736,32 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
     public Registration addInvalidChangeListener(
             ComponentEventListener<InvalidChangeEvent<EnhancedDatePicker>> listener) {
         return super.addInvalidChangeListener(listener);
+    }
+
+    /**
+     * Adds the given component into this field before the content, replacing
+     * any existing prefix component.
+     * <p>
+     * This is most commonly used to add a simple icon or static text into the
+     * field.
+     * 
+     * @param component
+     *            the component to set, can be {@code null} to remove existing
+     *            prefix component
+     */
+    public void setPrefixComponent(Component component) {
+    	PrefixUtil.setPrefixComponent(this, component);
+    }
+    
+    /**
+     * Gets the component in the prefix slot of this field.
+     * 
+     * @return the prefix component of this field, or {@code null} if no prefix
+     *         component has been set
+     * @see #setPrefixComponent(Component)
+     */
+    public Component getPrefixComponent() {
+    	return PrefixUtil.getPrefixComponent(this);
     }
 
     /**
