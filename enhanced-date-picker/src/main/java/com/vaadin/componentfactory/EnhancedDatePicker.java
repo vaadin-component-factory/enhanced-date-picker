@@ -410,6 +410,9 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
         if (i18n != null) {
             setI18nWithJS();
         }
+        if (formattingPattern != null) {
+            setPattern(formattingPattern);
+        }
         FieldValidationUtil.disableClientValidation(this);
     }
 
