@@ -24,12 +24,12 @@ import java.util.Objects;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.HasHelper;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasValidation;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.datepicker.GeneratedVaadinDatePicker;
-import com.vaadin.flow.component.datepicker.DatePicker.DatePickerI18n;
 import com.vaadin.flow.component.dependency.JavaScript;
 import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.function.SerializableFunction;
@@ -47,10 +47,10 @@ import elemental.json.JsonObject;
  * {@link DatePickerI18n} object.
  *
  */
-@JavaScript("frontend://date-fns-limited.min.js")
-@JavaScript("frontend://enhancedDatepickerConnector.js")
+@JavaScript("./date-fns-limited.min.js")
+@JavaScript("./enhancedDatepickerConnector.js")
 public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePicker, LocalDate>
-        implements HasSize, HasValidation {
+        implements HasSize, HasValidation, HasHelper {
 
 	private static final String PROP_AUTO_OPEN_DISABLED = "autoOpenDisabled";
 
@@ -90,7 +90,7 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
      * @see #setValue(Object)
      */
     public EnhancedDatePicker(LocalDate initialDate) {
-        super(initialDate, null, String.class, PARSER, FORMATTER);
+        super(initialDate, null, String.class, PARSER, FORMATTER, true);
 
         // workaround for https://github.com/vaadin/flow/issues/3496
         setInvalid(false);
