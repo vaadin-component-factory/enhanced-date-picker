@@ -306,7 +306,8 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
 
     /**
      * Set the Locale for the Date Picker. The displayed date will be matched to
-     * the format used in that locale.
+     * the format used in that locale. If this method is never called, the Locale
+     * will default to the UI's Locale.
      * <p>
      * NOTE:Supported formats are MM/DD/YYYY, DD/MM/YYYY and YYYY/MM/DD. Browser
      * compatibility can be different based on the browser and mobile devices,
@@ -355,8 +356,9 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
      * Setting the patterns for parsing the value of the date-picker.
      * 
      * The parsing will be attempted according to the order of the supplied patterns. If none of these
-     * patterns can successfully parse the date-picker's value, the parsing will be attempted using the
-     * formatting value (which can be set using @setPattern).
+     * patterns can successfully parse the date-picker's value, the parsing will, first, be attempted using the
+     * formatting value (which can be set using @setPattern). If the latter also fails, parsing will be
+     * attempted using the Locale (which can be set using @setLocale).
      *
      * @param parserPatterns
      *           the array of patterns used for parsing the date picker's value
@@ -377,9 +379,6 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
 
     /**
      * Setting the Pattern for formatting value of the date picker
-     *
-     * Note: overrides affect of @setLocale and opposite. If setLocale was called after this function then
-     * setPattern will have no effect
      *
      * @param formattingPattern
      *           the pattern for formatting value of the date picker
@@ -410,6 +409,9 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
         }
         if (i18n != null) {
             setI18nWithJS();
+        }
+        if (formattingPattern != null) {
+            setPattern(formattingPattern);
         }
         FieldValidationUtil.disableClientValidation(this);
     }

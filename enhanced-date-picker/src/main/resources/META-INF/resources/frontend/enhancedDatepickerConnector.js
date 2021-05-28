@@ -62,19 +62,68 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
             let inputValue = '';
             try {
                 inputValue = datepicker._inputValue;
-            } catch (err) {
+            } catch(err) {
                 /* component not ready: falling back to stored value */
                 inputValue = datepicker.value || '';
             }
             return inputValue;
-        }
+        };
+
+        const formatDateBasedOnPattern = function (date, pattern, language) {
+            let rawDate = new Date(date.year, date.month, date.day);
+            return DateFns.format(rawDate, pattern, { locale: DateFns.locales[language] });
+        };
+
+        const formatDateBasedOnLocale = function (date, locale) {
+            let rawDate = datepicker._parseDate(`${date.year}-${date.month + 1}-${date.day}`);
+            // Workaround for Safari DST offset issue when using Date.toLocaleDateString().
+            // This is needed to keep the correct date in formatted result even if Safari
+            // makes an error of an hour or more in the result with some past dates.
+            // See https://github.com/vaadin/vaadin-date-picker-flow/issues/126#issuecomment-508169514
+            rawDate.setHours(12);
+
+            return cleanString(rawDate.toLocaleDateString(locale));
+        };
+
+        const parseDateBasedOnParsers = function (dateString, parsersCopy, language) {
+            var date;
+            var i;
+            for (i in parsersCopy) {
+                try {
+                    date = DateFns.parse(dateString, parsersCopy[i], new Date(), { locale: DateFns.locales[language] });
+                    if (date != 'Invalid Date') {
+                        break;
+                    }
+                } catch (err) {}
+            }
+
+            return {
+                day: date.getDate(),
+                month: date.getMonth(),
+                year: date.getFullYear(),
+            };
+        };
+
+        const parseDateBasedOnLocale = function (dateString) {
+            dateString = cleanString(dateString);
+            let match = dateString.match(datepicker.$connector.regex);
+            if (match && match.length == 4) {
+                return {
+                    day: match[1],
+                    month: match[2] - 1,
+                    year: match[3],
+                };
+            } else {
+                return false;
+            }
+        };
 
         datepicker.$connector.setLocaleAndPattern = function (locale, pattern) {
             this.setLocalePatternAndParsers(locale, pattern, this.parsers);
-        }
+        };
 
         datepicker.$connector.setLocalePatternAndParsers = function (locale, pattern, parsers) {
-            let language = locale ? locale.split("-")[0] : "enUS";
+            let language = locale ? locale.split('-')[0] : 'enUS';
             let currentDate = false;
             let inputValue = getInputValue();
             if (datepicker.i18n.parseDate !== 'undefined' && inputValue) {
@@ -83,7 +132,11 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
             }
 
             /* create test-string where to extract parsing regex */
-            let testDate = new Date(datepicker.$connector.yearPart.initial, datepicker.$connector.monthPart.initial - 1, datepicker.$connector.dayPart.initial);
+            let testDate = new Date(
+                datepicker.$connector.yearPart.initial,
+                datepicker.$connector.monthPart.initial - 1,
+                datepicker.$connector.dayPart.initial
+            );
             let testString = cleanString(testDate.toLocaleDateString(locale));
             datepicker.$connector.parts.forEach(function (part) {
                 part.index = testString.indexOf(part.initial);
@@ -102,11 +155,20 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
              * The sorting part solves that which part is which (for example,
              * here the first part is month, second day and third year)
              *  */
-            datepicker.$connector.regex = testString.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&').replace(datepicker.$connector.dayPart.initial, "(\\d{1,2})").replace(datepicker.$connector.monthPart.initial, "(\\d{1,2})").replace(datepicker.$connector.yearPart.initial, "(\\d{4})");
+            datepicker.$connector.regex = testString
+                .replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+                .replace(datepicker.$connector.dayPart.initial, '(\\d{1,2})')
+                .replace(datepicker.$connector.monthPart.initial, '(\\d{1,2})')
+                .replace(datepicker.$connector.yearPart.initial, '(\\d{4})');
 
             datepicker.i18n.formatDate = function (date) {
-                let rawDate = new Date(date.year, date.month, date.day);
-                return DateFns.format(rawDate, pattern, {locale: DateFns.locales[language]});
+                if (pattern) {
+                    return formatDateBasedOnPattern(date, pattern, language);
+                } else if (locale) {
+                    return formatDateBasedOnLocale(date, locale);
+                } else {
+                    console.error('Must define either a parsing pattern or a locale. Currently both are undefined.');
+                }
             };
 
             function getSeparator(parser) {
@@ -192,53 +254,30 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
                     return;
                 }
 
-                var parsersCopy = JSON.parse(JSON.stringify(parsers));
-                parsersCopy.push(pattern);
-
-                let minParserLength = 999;
-                parsersCopy.forEach(parserCopy => {
-                    if (parserCopy.length < minParserLength) {
-                        minParserLength = parserCopy.length;
-                    }
-                });
-
-                var date;
-                var i;
-                for (i in parsersCopy) {
-                    var completeDateString;
-                    if (dateString.length < minParserLength) {
-                        completeDateString = tryCompleteDateString(dateString, parsersCopy[i]);
-                    } else {
-                        completeDateString = dateString;
-                    }
-
-                    try {
-                        date = DateFns.parse(completeDateString,
-                            parsersCopy[i],
-                            new Date(), {locale: DateFns.locales[language]});
-                        if (date != 'Invalid Date') {
-                            break;
-                        }
-                    } catch (err) {
-
-                    }
+                let parsersCopy = JSON.parse(JSON.stringify(parsers));
+                if (pattern) {
+                    parsersCopy.push(pattern);
                 }
 
-                return {
-                    day: date.getDate(),
-                    month: date.getMonth(),
-                    year: date.getFullYear()
-                };
+                if (parsersCopy.length > 0) {
+                    return parseDateBasedOnParsers(dateString, parsersCopy, language);
+                }
+
+                if (locale) {
+                    var result = parseDateBasedOnLocale(dateString);
+                    if (result && result != false) {
+                        return result;
+                    }
+                }
             };
 
-            if (inputValue === "") {
+            if (inputValue === '') {
                 oldLocale = locale;
             } else if (currentDate) {
                 /* set current date to invoke use of new locale */
                 datepicker._selectedDate = new Date(currentDate.year, currentDate.month, currentDate.day);
             }
-        }
-
+        };
 
         datepicker.$connector.setLocale = function (locale) {
             try {
@@ -254,12 +293,12 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
         }
 
 
-        datepicker.$connector.setPattern = function (pattern) {
+        datepicker.$connector.setPattern = function(pattern) {
             this.pattern = pattern ? pattern : this.defaultPattern;
             this.setLocalePatternAndParsers(this.locale, this.pattern, this.parsers);
         }
 
-        datepicker.$connector.setParsers = function (...parsers) {
+        datepicker.$connector.setParsers = function(...parsers) {
             this.parsers = parsers;
             this.setLocalePatternAndParsers(this.locale, this.pattern, this.parsers);
         }
