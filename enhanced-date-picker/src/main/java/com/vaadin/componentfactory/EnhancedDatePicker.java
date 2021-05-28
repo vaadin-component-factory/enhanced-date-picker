@@ -48,8 +48,8 @@ import elemental.json.JsonObject;
  * {@link DatePickerI18n} object.
  *
  */
-@JsModule("./date-fns-limited.min.js")
-@JsModule("./enhancedDatepickerConnector.js")
+@JavaScript("frontend://date-fns-limited.min.js")
+@JavaScript("frontend://enhancedDatepickerConnector.js")
 public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePicker, LocalDate>
         implements HasSize, HasValidation {
 
@@ -91,7 +91,7 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
      * @see #setValue(Object)
      */
     public EnhancedDatePicker(LocalDate initialDate) {
-        super(initialDate, null, String.class, PARSER, FORMATTER, true);
+        super(initialDate, null, String.class, PARSER, FORMATTER);
 
         // workaround for https://github.com/vaadin/flow/issues/3496
         setInvalid(false);

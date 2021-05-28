@@ -24,7 +24,7 @@
     </licenses>
 
     <properties>
-        <flow.version>6.0.9</flow.version>
+        <flow.version>2.3.4</flow.version>
         <osgi.version>6.0.0</osgi.version>
         <vaadin.version>14.5.2</vaadin.version>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -120,7 +120,6 @@
                     <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 
@@ -141,7 +140,7 @@
                     <plugin>
                         <groupId>com.vaadin</groupId>
                         <artifactId>vaadin-maven-plugin</artifactId>
-                        <version>13.0.9</version>
+                        <version>14.6.1</version>
                         <executions>
                             <execution>
                                 <goals>
