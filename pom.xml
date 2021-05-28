@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.sphereon.vaadin.componentfactor</groupId>
+    <groupId>com.vaadin.componentfactor</groupId>
     <artifactId>enhanced-date-picker-parent</artifactId>
-    <version>1.4.0-VD19</version>
+    <version>1.4.0-autocomplete-VD19</version>
     <packaging>pom</packaging>
     <name>Enhanced DatePicker Parent</name>
 
