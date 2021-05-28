@@ -17,6 +17,7 @@ class EnhancedDatePickerPart {
         return 0;
     }
 }
+
 window.Vaadin.Flow.enhancedDatepickerConnector = {
     initLazy: function (datepicker) {
         // Check whether the connector was already initialized for the datepicker
@@ -61,7 +62,7 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
             let inputValue = '';
             try {
                 inputValue = datepicker._inputValue;
-            } catch(err) {
+            } catch (err) {
                 /* component not ready: falling back to stored value */
                 inputValue = datepicker.value || '';
             }
@@ -108,6 +109,84 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
                 return DateFns.format(rawDate, pattern, {locale: DateFns.locales[language]});
             };
 
+            function getSeparator(parser) {
+                for (var i = 0; i < parser.length; i++) {
+                    const char = parser.charCodeAt(i);
+                    if (char > 44 && char < 48) {
+                        return parser[i];
+                    }
+                }
+            }
+
+
+            function appendMonthOrDay(parser, result, now, separator) {
+                if (parser[result.length].toUpperCase() == 'M') {
+                    const month = now.getMonth() + 1;
+                    if (month < 10 && isDoubleDigitPattern(parser, result)) {
+                        result = result + '0';
+                    }
+                    result = result + month + separator;
+                } else if (parser[result.length].toUpperCase() == 'D') {
+                    const day = now.getDate();
+                    if (day < 10 && parser[result.length + 1] == 'D') {
+                        result = result + '0';
+                    }
+                    result = result + day + separator;
+                }
+                return result;
+            }
+
+            function appendYear(parser, result, now) {
+                if (parser.includes('yyyy')) {
+                    result = result + now.getFullYear();
+                } else if (parser.includes('yy')) {
+                    result = result + now.getFullYear() % 100;
+                }
+                return result;
+            }
+
+            function isDoubleDigitPattern(parser, result) {
+                const separatorChar = parser[result.length].toUpperCase();
+                return (separatorChar == 'D' || separatorChar == 'M')
+                    && parser[result.length] == parser[result.length + 1];
+            }
+
+            function tryCompleteDateString(dateString, parser) {
+                const now = new Date();
+                const separator = getSeparator(parser);
+                let workString = dateString;
+                let result = "";
+
+                let count = 2;
+                while (count-- > 0) {
+                    if (workString.length > 2 && dateString[1] == separator) {
+                        if (isDoubleDigitPattern(parser, result)) {
+                            result = result + '0';
+                        }
+                        result = result.concat(workString[0]).concat(separator);
+                        workString = workString.substring(2);
+                    } else if (workString.length > 2 && dateString[2] == separator) {
+                        result = result + workString.substring(0, 2) + separator;
+                        workString = workString.substring(3);
+                    } else if (workString.length > 1) {
+                        result = result.concat(workString.substring(0, 2)).concat(separator);
+                        workString = workString.substring(2);
+                    } else if (workString.length == 1) {
+                        if (isDoubleDigitPattern(parser, result)) {
+                            result = result + '0';
+                        }
+                        result = result.concat(workString[0]).concat(separator);
+                        workString = workString.substring(1);
+                    } else if (count == 0) {
+                        result = appendMonthOrDay(parser, result, now, separator);
+                    }
+                }
+                if (workString.length == 0) {
+                    result = appendYear(parser, result, now);
+                }
+                return result;
+            }
+
             datepicker.i18n.parseDate = function (dateString) {
                 if (dateString.length == 0) {
                     return;
@@ -116,19 +195,32 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
                 var parsersCopy = JSON.parse(JSON.stringify(parsers));
                 parsersCopy.push(pattern);
 
+                let minParserLength = 999;
+                parsersCopy.forEach(parserCopy => {
+                    if (parserCopy.length < minParserLength) {
+                        minParserLength = parserCopy.length;
+                    }
+                });
+
                 var date;
                 var i;
                 for (i in parsersCopy) {
+                    var completeDateString;
+                    if (dateString.length < minParserLength) {
+                        completeDateString = tryCompleteDateString(dateString, parsersCopy[i]);
+                    } else {
+                        completeDateString = dateString;
+                    }
+
                     try {
-                        date = DateFns.parse(dateString,
+                        date = DateFns.parse(completeDateString,
                             parsersCopy[i],
                             new Date(), {locale: DateFns.locales[language]});
                         if (date != 'Invalid Date') {
                             break;
                         }
-                    }
-                      catch(err) {
-                        
+                    } catch (err) {
+
                     }
                 }
 
@@ -147,6 +239,7 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
             }
         }
 
+
         datepicker.$connector.setLocale = function (locale) {
             try {
                 // Check whether the locale is supported or not
@@ -161,12 +254,12 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
         }
 
 
-        datepicker.$connector.setPattern = function(pattern) {
+        datepicker.$connector.setPattern = function (pattern) {
             this.pattern = pattern ? pattern : this.defaultPattern;
             this.setLocalePatternAndParsers(this.locale, this.pattern, this.parsers);
         }
 
-        datepicker.$connector.setParsers = function(...parsers) {
+        datepicker.$connector.setParsers = function (...parsers) {
             this.parsers = parsers;
             this.setLocalePatternAndParsers(this.locale, this.pattern, this.parsers);
         }

@@ -30,6 +30,7 @@ final class FieldValidationUtil {
         // utility class should not be instantiated
     }
 
+
     static void disableClientValidation(EnhancedDatePicker component) {
         // Since this method should be called for every time when the component
         // is attached to the UI, lets check that it is actually so
@@ -51,6 +52,7 @@ final class FieldValidationUtil {
                         executionContext -> overrideClientValidation(
                                 component)));
     }
+
 
     private static void overrideClientValidation(EnhancedDatePicker component) {
         StringBuilder expression = new StringBuilder(

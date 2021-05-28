@@ -10,7 +10,7 @@
 
     <name>Enhanced DatePicker</name>
 
-    <version>1.4.0</version>
+    <version>1.4.0-VD19</version>
     <inceptionYear>2019</inceptionYear>
     <organization>
         <name>Vaadin Ltd</name>
@@ -18,9 +18,9 @@
     </organization>
 
     <properties>
-        <flow.version>2.3.4</flow.version>
+        <flow.version>6.0.9</flow.version>
         <osgi.version>6.0.0</osgi.version>
-        <vaadin.version>14.3.4</vaadin.version>
+        <vaadin.version>19.0.8</vaadin.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>flow-osgi</artifactId>
-            <version>${flow.version}</version>
+            <version>2.3.4</version>
             <scope>provided</scope>
         </dependency>
 
@@ -71,7 +71,7 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-date-picker-flow</artifactId>
-            <version>2.1.0</version>
+            <version>${vaadin.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

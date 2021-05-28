@@ -31,6 +31,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.datepicker.GeneratedVaadinDatePicker;
 import com.vaadin.flow.component.datepicker.DatePicker.DatePickerI18n;
 import com.vaadin.flow.component.dependency.JavaScript;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.internal.JsonSerializer;
@@ -47,8 +48,8 @@ import elemental.json.JsonObject;
  * {@link DatePickerI18n} object.
  *
  */
-@JavaScript("frontend://date-fns-limited.min.js")
-@JavaScript("frontend://enhancedDatepickerConnector.js")
+@JsModule("./date-fns-limited.min.js")
+@JsModule("./enhancedDatepickerConnector.js")
 public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePicker, LocalDate>
         implements HasSize, HasValidation {
 
@@ -90,7 +91,7 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
      * @see #setValue(Object)
      */
     public EnhancedDatePicker(LocalDate initialDate) {
-        super(initialDate, null, String.class, PARSER, FORMATTER);
+        super(initialDate, null, String.class, PARSER, FORMATTER, true);
 
         // workaround for https://github.com/vaadin/flow/issues/3496
         setInvalid(false);
@@ -414,7 +415,7 @@ public class EnhancedDatePicker extends GeneratedVaadinDatePicker<EnhancedDatePi
     }
 
     private void initConnector() {
-        runBeforeClientResponse(ui -> ui.getPage().executeJavaScript(
+        runBeforeClientResponse(ui -> ui.getPage().executeJs(
                 "window.Vaadin.Flow.enhancedDatepickerConnector.initLazy($0)",
                 getElement()));
     }
