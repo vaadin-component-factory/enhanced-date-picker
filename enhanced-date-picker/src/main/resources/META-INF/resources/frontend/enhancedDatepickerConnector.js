@@ -85,7 +85,7 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
             return cleanString(rawDate.toLocaleDateString(locale));
         };
 
-        const getMinParserPatternLength = function () {
+        const getMinParserPatternLength = function (parsersCopy) {
             let minParserLength = Number.MAX_SAFE_INTEGER;
             parsersCopy.forEach(parserCopy => {
                 if (parserCopy.length < minParserLength) {
@@ -99,12 +99,16 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
 
             var date;
             var i;
-            const completeDateString = dateString.length < getMinParserPatternLength() ? tryCompleteDateString(dateString, parsersCopy[i]) : dateString;
             for (i in parsersCopy) {
+                const completeDateString = dateString.length < getMinParserPatternLength(parsersCopy)
+                    ? tryCompleteDateString(dateString, parsersCopy[i])
+                    : dateString;
+
                 try {
                     date = DateFns.parse(completeDateString, parsersCopy[i], new Date(), {locale: DateFns.locales[language]});
                     if (date != 'Invalid Date') {
                         break;
+                        1
                     }
                 } catch (err) {
                 }
@@ -171,7 +175,7 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
             let result = "";
 
             let count = 2;
-            while (count-- > 0) {
+            while (count > 0) {
                 if (workString.length > 2 && dateString[1] == separator) {
                     if (isDoubleDigitPattern(parser, result)) {
                         result = result + '0';
@@ -190,11 +194,14 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
                     }
                     result = result.concat(workString[0]).concat(separator);
                     workString = workString.substring(1);
-                } else if (count == 0) {
+                } else if (count == 1) {
                     result = appendMonthOrDay(parser, result, now, separator);
                 }
+                count--;
             }
-            if (workString.length == 0) {
+            if (workString.length == 2) {
+                result = result + ((Math.round(now.getFullYear() / 1000) * 1000) + Number(workString));
+            } else if (workString.length == 0) {
                 result = appendYear(parser, result, now);
             }
             return result;
