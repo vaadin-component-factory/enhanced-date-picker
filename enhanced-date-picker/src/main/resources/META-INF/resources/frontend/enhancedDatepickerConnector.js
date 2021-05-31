@@ -149,11 +149,21 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
             return result;
         }
 
-        const appendYear = function (parser, result, now) {
+        function appendYear(now, workString, result) {
+            let millennium = Math.round(now.getFullYear() / 1000) * 1000;
+            const year = Number(workString);
+            const currentYear = now.getFullYear() % 100;
+            if (year - currentYear > 20) { // Entering dates more than 20 years into the future is rare, more likely its a birthdate
+                millennium -= 100;
+            }
+            return result + (millennium + year);
+        }
+
+        const appendFullYear = function (parser, result, now) {
             if (parser.includes('yyyy')) {
                 result = result + now.getFullYear();
             } else if (parser.includes('yy')) {
-                result = result + now.getFullYear() % 100;
+                result = result + (now.getFullYear() % 100);
             }
             return result;
         }
@@ -200,9 +210,9 @@ window.Vaadin.Flow.enhancedDatepickerConnector = {
                 count--;
             }
             if (workString.length == 2) {
-                result = result + ((Math.round(now.getFullYear() / 1000) * 1000) + Number(workString));
+                result = appendYear(now, workString, result);
             } else if (workString.length == 0) {
-                result = appendYear(parser, result, now);
+                result = appendFullYear(parser, result, now);
             }
             return result;
         }
